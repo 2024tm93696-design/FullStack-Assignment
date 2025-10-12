@@ -1,8 +1,5 @@
 const router = require('express').Router();
-
-// const { adminRegister, adminLogIn, deleteAdmin, getAdminDetail, updateAdmin } = require('../controllers/admin-controller.js');
-
-const { adminRegister, adminLogIn, getAdminDetail} = require('../controllers/admin-controller.js');
+const { adminRegister, adminLogIn, getAdminDetail} = require('../controllers/admin.js');
 const {
     studentRegister,
     studentLogIn,
@@ -11,9 +8,10 @@ const {
     deleteStudents,
     deleteStudent,
     updateStudent,
-    } = require('../controllers/student_controller.js');
-const { teacherRegister, teacherLogIn, getTeachers, getTeacherDetail, deleteTeachers, deleteTeacher } = require('../controllers/teacher-controller.js');
-const { addEquipment, getEquipments, getEquipmentDetail, updateEquipment, deleteEquipment } = require('../controllers/equipment-controller.js');
+    } = require('../controllers/student.js');
+const { teacherRegister, teacherLogIn, getTeachers, getTeacherDetail, deleteTeachers, deleteTeacher } = require('../controllers/teacher.js');
+const { addEquipment, getEquipments, getEquipmentDetail, updateEquipment, deleteEquipment } = require('../controllers/equipment.js');
+const {createRequest, updateRequestStatus, markAsReturned, getAllRequests, getMyRequests} = require('../controllers/request.js');
 
 // Admin
 router.post('/adminRegister', adminRegister);
@@ -55,5 +53,13 @@ router.get('/equipments', getEquipments);
 router.get('/equipment/:id', getEquipmentDetail);
 router.put('/equipment/:id', updateEquipment);
 router.delete('/equipment/:id', deleteEquipment);
+
+//Request
+
+router.post('/createRequest', createRequest);
+router.get('/requests', getAllRequests);
+router.get('/myRequest/:id', getMyRequests);
+router.put('/updateRequest/:id', updateRequestStatus);
+router.put('/markReturn/:id', markAsReturned);
 
 module.exports = router;
