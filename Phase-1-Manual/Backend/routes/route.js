@@ -13,6 +13,7 @@ const {
     updateStudent,
     } = require('../controllers/student_controller.js');
 const { teacherRegister, teacherLogIn, getTeachers, getTeacherDetail, deleteTeachers, deleteTeacher } = require('../controllers/teacher-controller.js');
+const { addEquipment, getEquipments, getEquipmentDetail, updateEquipment, deleteEquipment } = require('../controllers/equipment-controller.js');
 
 // Admin
 router.post('/adminRegister', adminRegister);
@@ -46,5 +47,13 @@ router.get("/teacher/:id", getTeacherDetail)
 
 router.delete("/teachers/:id", deleteTeachers)
 router.delete("/teacher/:id", deleteTeacher)
+
+// Equipment
+
+router.post('/addEquipment', addEquipment);
+router.get('/equipments', getEquipments);
+router.get('/equipment/:id', getEquipmentDetail);
+router.put('/equipment/:id', updateEquipment);
+router.delete('/equipment/:id', deleteEquipment);
 
 module.exports = router;

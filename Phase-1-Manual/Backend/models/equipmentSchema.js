@@ -1,6 +1,10 @@
 const mongoose = require("mongoose")
 
 const equipmentSchema = new mongoose.Schema({
+    id : {
+        type: String,
+        required:true,
+    },
     name: {
         type: String,
         required: true,
@@ -11,7 +15,7 @@ const equipmentSchema = new mongoose.Schema({
     },
     condition: {
         type: String,
-        enum: ['APPROVED', 'REJECTED', 'PENDING', 'RETURNED'],
+        enum: ['APPROVED', 'REJECTED', 'PENDING', 'RETURNED', "AVAILABLE"],
         required: true,
     },
     quantity: {
