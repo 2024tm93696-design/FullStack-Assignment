@@ -17,23 +17,37 @@ const studentSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	// school: {
-	//     type: mongoose.Schema.Types.ObjectId,
-	//     ref: 'admin',
-	//     required: true,
-	// },
 	role: {
 		type: String,
 		default: "Student"
 	},
-	// class: {
-	//     type: String,
-	//     required: true,
-	// },
-	// section: {
-	//     type: String,
-	//     required: true,
-	// },
+    equipment: {
+		id: {
+			type: String,
+			required: true,
+		},
+        name: {
+            type: String,
+            required: true,
+        },
+        category: {
+            type: String,
+            required: true,
+        },
+        condition: {
+            type: String,
+            enum: ['APPROVED', 'REJECTED', 'PENDING', 'RETURNED', "AVAILABLE"],
+            required: true,
+        },
+        quantity: {
+            type: Number,
+            required: true,
+        },
+        availability: {
+            type: Number,
+            default: "Admin"
+        },
+    },
 });
 
 module.exports = mongoose.model("student", studentSchema);

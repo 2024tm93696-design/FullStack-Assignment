@@ -24,7 +24,7 @@ const equipmentSchema = new mongoose.Schema({
     },
     availability: {
         type: Number,
-        default: "Admin"
+        required: true,
     },
 });
 
