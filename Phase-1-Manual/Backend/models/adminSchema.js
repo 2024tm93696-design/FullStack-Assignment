@@ -7,21 +7,19 @@ const adminSchema = new mongoose.Schema({
 	},
 	email: {
 		type: String,
-		unique: true,
 		required: true,
 	},
 	password: {
 		type: String,
 		required: true,
 	},
-	employeeId: {
+	enrollmentNum: {
 		type: String,
 		required: true,
-		unique: true,
 	},
 	role: {
 		type: String,
-		default: "Admin"
+		required: true,
 	},
 });
 

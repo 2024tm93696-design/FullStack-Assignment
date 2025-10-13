@@ -29,7 +29,7 @@ const createRequest = async (req, res) => {
 
 		const duplicateRequest = await Request.findOne({
 			"equipment.id": equipment.id,
-			"student.rollNum": student.rollNum,
+			"student.enrollmentNum": student.enrollmentNum,
 			status: { $in: ["PENDING", "APPROVED"] },
 			$and: [
 				{ requestDate: { $lte: new Date(returnDate) } },
@@ -114,7 +114,7 @@ const updateRequestStatus = async (req, res) => {
 		await request.save();
 		if (status === "APPROVED") {
 			await Student.findOneAndUpdate(
-				{ rollNum: request.student.rollNum },
+				{ enrollmentNum: request.student.enrollmentNum },
 				{ $addToSet: { equipment: request.equipment } }, // add only if not already present
 				{ new: true }
 			);
@@ -176,7 +176,7 @@ const markAsReturned = async (req, res) => {
 		request.equipment.availability = Number(request.equipment.availability);
 		if (request.status === "RETURNED") {
 			await Student.findOneAndUpdate(
-				{ rollNum: request.student.rollNum },
+				{ enrollmentNum: request.student.enrollmentNum },
 				{ $pull: { "equipment.id": request.equipment.id } }, // removes that one item
 				{ new: true }
 			);
@@ -230,7 +230,7 @@ const getAllRequests = async (req, res) => {
 const getMyRequests = async (req, res) => {
 	try {
 
-		const requests = await Request.find({ "student.rollNum": req.params.id })
+		const requests = await Request.find({ "student.enrollmentNum": req.params.id })
 		res.status(200).json({
 			statusCode: 200,
 			message: "My requests fetched successfully",

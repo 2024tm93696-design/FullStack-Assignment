@@ -9,7 +9,7 @@ const studentSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	rollNum: {
+	enrollmentNum: {
 		type: Number,
 		required: true
 	},
@@ -19,33 +19,28 @@ const studentSchema = new mongoose.Schema({
 	},
 	role: {
 		type: String,
+		required: true,
 		default: "Student"
 	},
     equipment: {
 		id: {
 			type: String,
-			required: true,
 		},
         name: {
             type: String,
-            required: true,
         },
         category: {
             type: String,
-            required: true,
         },
         condition: {
             type: String,
             enum: ['APPROVED', 'REJECTED', 'PENDING', 'RETURNED', "AVAILABLE"],
-            required: true,
         },
         quantity: {
             type: Number,
-            required: true,
         },
         availability: {
             type: Number,
-            default: "Admin"
         },
     },
 });
