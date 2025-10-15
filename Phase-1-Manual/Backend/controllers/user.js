@@ -106,6 +106,7 @@ const LoginUser = async (req, res) => {
             username,
             name,
             role,
+            user,
             message: "User login success"
         });
 
@@ -167,7 +168,7 @@ const VerifyTokenMiddleware = (req, res, next) => {
 
 const logout = (req, res) => {
     try {
-        res.clearCookie("jwt"); // ✅ Clear the cookie named "jwt"
+        res.clearCookie("jwt");
         res.status(200).send({
             status: 200,
             message: "Logout successfully"

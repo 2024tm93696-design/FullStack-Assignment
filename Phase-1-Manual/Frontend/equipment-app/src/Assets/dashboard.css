@@ -1,0 +1,34 @@
+.dashboard-img {
+	width: 100%;
+	height: 70vh;
+}
+
+.home-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+}
+
+.home-tab {
+	padding: 0 60px;
+}
+
+.request-button {
+	color: rgb(73, 169, 73);
+}
+
+.btn {
+	border: 1px solid rgb(47, 129, 252) !important;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+@media (min-width: 1024px) {
+	.home-container {
+		margin-left: 10em;
+		margin-right: 10em;
+	}
+
+	.home-tab {
+		padding: unset;
+	}
+}
