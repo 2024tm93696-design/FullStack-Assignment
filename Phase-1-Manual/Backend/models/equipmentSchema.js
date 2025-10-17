@@ -15,7 +15,7 @@ const equipmentSchema = new mongoose.Schema({
     },
     condition: {
         type: String,
-        enum: ['APPROVED', 'REJECTED', 'PENDING', 'RETURNED', "AVAILABLE"],
+        enum: ["AVAILABLE", "OUT OF STOCK"],
         required: true,
     },
     quantity: {

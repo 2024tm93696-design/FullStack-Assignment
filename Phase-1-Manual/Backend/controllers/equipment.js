@@ -97,7 +97,7 @@ const updateEquipment = async (req, res) => {
 				equipment.category = req.body.category || equipment.category;
 				equipment.condition = req.body.condition || equipment.condition;
 				equipment.quantity = req.body.quantity || equipment.quantity;
-				equipment.availability = req.body.availability || equipment.availability;
+				equipment.availability = (req.body.availability < 0) ? equipment.availability : req.body.availability;
 				let result = await equipment.save();
 				res.status(200).send({
 					statusCode: 200,

@@ -24,6 +24,33 @@
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.btn-request-edit {
+	background-color: aliceblue !important;
+
+	b {
+		color: rgb(168, 92, 10);
+	}
+}
+
+.btn-request-delete {
+	background-color: aliceblue !important;
+
+	b {
+		color: red;
+	}
+}
+
+.btn-request-add {
+	border: 1px solid rgb(26, 100, 139) !important;
+	background-color: rgb(161, 227, 241) !important;
+}
+
+.button-cont {
+	border: 2px solid rgb(26, 100, 139) !important;
+	margin: 1rem 0;
+	border-radius: 4px;
+}
+
 .search-bar {
 	border: 2px solid #bcad92ff;
 	width: 50vw !important;

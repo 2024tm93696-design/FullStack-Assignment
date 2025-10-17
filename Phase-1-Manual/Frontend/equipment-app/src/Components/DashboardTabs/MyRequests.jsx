@@ -9,8 +9,8 @@ function MyRequests() {
 
 	useEffect(() => {
 		const requests = localStorage.getItem('requests') ? JSON.parse(localStorage.getItem('requests')) : [];
-		setFilteredObjects(requests.data)
-		setObjects(requests.data);
+		setFilteredObjects(requests.data.reverse())
+		setObjects(requests.data.reverse());
 	}, [])
 
 	const filterDefault = {

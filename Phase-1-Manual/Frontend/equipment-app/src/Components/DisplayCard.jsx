@@ -12,8 +12,11 @@ import Box from '@mui/material/Box';
 import { useNavigate } from "react-router";
 import { Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import placeholder from "../images/placeholder.webp"
 
-function DisplayCard({ objects }) {
+function DisplayCard({ objects, setObjects, handleEditOpen }) {
 	const [imageMap, setImageMap] = useState({});
 	const [alert, setAlert] = useState(false)
 	const [alertMessage, setAlertMessage] = useState(["", "success"])
@@ -48,11 +51,11 @@ function DisplayCard({ objects }) {
 					localStorage.setItem("pexelsImageCache", JSON.stringify(cached));
 					return imageUrl;
 				} else {
-					return `https://loremflickr.com/400/300/${objName}`;
+					return placeholder;
 				}
 			} catch (err) {
 				console.error("Error fetching image for", objName, err);
-				return `https://loremflickr.com/400/300/${objName}`;
+				return placeholder;
 			}
 		};
 
@@ -68,7 +71,7 @@ function DisplayCard({ objects }) {
 		if (objects.length > 0) fetchAllImages();
 	}, [objects]);
 
-	const handleRequest = async(card) => {
+	const handleRequest = async (card) => {
 		const user = JSON.parse(localStorage.getItem("userDetails")) || {};
 		const requestDate = new Date();
 		const returnDate = new Date(requestDate);
@@ -83,13 +86,34 @@ function DisplayCard({ objects }) {
 				? { student: user }
 				: { teacher: user })
 		};
-	await	axios.post('http://localhost:5000/api/v1/createRequest', payload).then((response) => {
+		await axios.post('http://localhost:5000/api/v1/createRequest', payload).then((response) => {
 			setAlert(true)
 			setTimeout(() => {
 				setAlert(false)
 			}, 4000)
 			setAlertMessage(["Equipment Requested Successfully", "success"])
-			navigate(0);
+		}).catch((error) => {
+			console.error("Error fetching equipments:", error);
+			setAlert(true)
+			setTimeout(() => {
+				setAlert(false)
+			}, 4000)
+			setAlertMessage([error.response.data.message, "error"])
+		})
+	}
+
+	const handleDelete = async (card) => {
+		const role = localStorage.getItem("role");
+		await axios.delete(`http://localhost:5000/api/v1/equipment/${card.id}`, {
+			data: { role: role }
+		}).then((response) => {
+			setAlert(true)
+			setTimeout(() => {
+				setAlert(false)
+			}, 4000)
+			setAlertMessage([response.data.message, "success"]);
+			const myEquipments = objects.filter(item => item.id !== card.id);
+			setObjects(myEquipments)
 
 		}).catch((error) => {
 			console.error("Error fetching equipments:", error);
@@ -108,11 +132,12 @@ function DisplayCard({ objects }) {
 					{!objects || objects.length > 0 ?
 						objects.map((card, index) => {
 							const userId = JSON.parse(localStorage.getItem("userDetails")).enrollmentNum;
+							const role = JSON.parse(localStorage.getItem("userDetails")).role;
 							const userRequests = localStorage.getItem('requests') ? JSON.parse(localStorage.getItem('requests')) : [];
 							const currRequest = userRequests.data.filter(req => req.equipment.id === card.id);
 							const latestRequest = currRequest.reduce((latest, current) => {
 								return new Date(current.requestDate) > new Date(latest.requestDate) ? current : latest;
-							}, currRequest[0]);						
+							}, currRequest[0]);
 							const requestStatus = latestRequest ? latestRequest.status : null;
 							const buttonText = requestStatus === "PENDING" ? "Already Requested" : requestStatus === "APPROVED" ? "Equipment Issued" : "Request";
 							const isRequestAllowed = card.availability > 0 && (!requestStatus || requestStatus === "REJECTED" || requestStatus === "RETURNED");
@@ -140,10 +165,18 @@ function DisplayCard({ objects }) {
 												</div>
 											</Typography>
 										</CardContent>
-										<CardActions style={{ display: "flex", justifyContent: "space-between", padding: "10px 20px" }}>
-											<Button size="small" disabled={!isRequestAllowed} className={isRequestAllowed ? 'btn-request' : ""} onClick={() => handleRequest(card)}><b>{buttonText}</b></Button>
-											{isRequestAllowed || card.condition === "OUT OF STOCK" && <Chip label={getStatus(card.availability)[1]} color={getStatus(card.availability)[0]} size='small' />}
-										</CardActions>
+										{role === "Admin" ? (
+											<CardActions style={{ float: 'right' }}>
+												<Button size="small" className={'btn-request-edit'} onClick={() => { handleEditOpen(card) }}><b><EditIcon /></b></Button>
+												<Button size="small" className={'btn-request-delete'} onClick={() => { handleDelete(card) }}><b><DeleteIcon /></b></Button>
+												{isRequestAllowed || card.condition === "OUT OF STOCK" && <Chip label={getStatus(card.availability)[1]} color={getStatus(card.availability)[0]} size='small' />}
+											</CardActions>
+										) :
+											<CardActions style={{ display: "flex", justifyContent: "space-between", padding: "10px 20px" }}>
+												<Button size="small" disabled={!isRequestAllowed} className={isRequestAllowed ? 'btn-request' : ""} onClick={() => handleRequest(card)}><b>{buttonText}</b></Button>
+												{isRequestAllowed || card.condition === "OUT OF STOCK" && <Chip label={getStatus(card.availability)[1]} color={getStatus(card.availability)[0]} size='small' />}
+											</CardActions>
+										}
 									</Card>
 								</Grid>
 							)

@@ -9,13 +9,16 @@ function Home() {
 	const [objects, setObjects] = useState([]);
 	const [filteredObjects, setFilteredObjects] = useState([])
 
-	useEffect(async() => {
-		await axios.get('http://localhost:5000/api/v1/equipments').then((response) => {
-			setObjects(response.data.data || []);
-			setFilteredObjects(response.data.data || [])
-		}).catch((error) => {
-			console.error("Error fetching equipments:", error);
-		})
+	useEffect(() => {
+		const fetchData = async () => {
+			await axios.get('http://localhost:5000/api/v1/equipments').then((response) => {
+				setObjects(response.data.data || []);
+				setFilteredObjects(response.data.data || [])
+			}).catch((error) => {
+				console.error("Error fetching equipments:", error);
+			})
+		}
+		fetchData()
 	}, []);
 
 	const filterDefault = {

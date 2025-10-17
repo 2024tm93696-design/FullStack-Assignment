@@ -12,6 +12,7 @@ import Chip from '@mui/material/Chip';
 import "../Assets/dashboard.css";
 import { Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
+import placeholder from "../images/placeholder.webp"
 
 function DisplayCard({ objects, showButton, setObjects }) {
 	const [imageMap, setImageMap] = useState({});
@@ -51,11 +52,11 @@ function DisplayCard({ objects, showButton, setObjects }) {
 					localStorage.setItem("pexelsImageCache", JSON.stringify(cached));
 					return imageUrl;
 				} else {
-					return `https://loremflickr.com/400/300/${objName}`;
+					return placeholder;
 				}
 			} catch (err) {
 				console.error("Error fetching image for", objName, err);
-				return `https://loremflickr.com/400/300/${objName}`;
+				return placeholder;
 			}
 		};
 
@@ -79,7 +80,7 @@ function DisplayCard({ objects, showButton, setObjects }) {
 			}, 4000)
 			setAlertMessage(["Equipment Returned SuccessFully", "success"]);
        const myEquipments = objects.filter(item => item.id !== request.id);
-			 setObjects(myEquipments)
+			 setObjects(myEquipments.reverse())
 		}).catch((error) => {
 			console.error("Error fetching equipments:", error);
 			setAlert(true)
@@ -96,9 +97,8 @@ function DisplayCard({ objects, showButton, setObjects }) {
 				{!objects || objects.length > 0 ?
 					objects.map((card, index) => {
 						const requestDate = dayjs(card.requestDate).format("DD-MM-YYYY");
-						const returnDate = dayjs(card.returnDate).format("DD-MM-YYYY")
-						const today = dayjs().format("DD-MM-YYYY");
-						
+						const returnDate = dayjs(card.returnDate).format("DD-MM-YYYY")					
+							
 						return (
 								<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
 									<Card sx={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)", borderRadius: "6px" }} className='card-width' >

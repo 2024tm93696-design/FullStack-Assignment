@@ -41,17 +41,20 @@ const TeacherDashboard = () => {
 		navigate(tabHashes[newValue]); // update URL hash
 	};
 
-	useEffect(async() => {
-		const user = JSON.parse(localStorage.getItem("userDetails")) || {};
-		await axios.get(`http://localhost:5000/api/v1/teacherRequests/${user.enrollmentNum}`).then((response) => {
-			localStorage.setItem('requests', JSON.stringify(response.data));
-			setRequests(response.data || []);
-			setErrorAlert(false);
-		}).catch((error) => {
-			console.error("Error fetching equipments:", error);
-			setError(error);
-			setErrorAlert(true);
-		})
+	useEffect(() => {
+		const fetchData = async () => {
+			const user = JSON.parse(localStorage.getItem("userDetails")) || {};
+			await axios.get(`http://localhost:5000/api/v1/teacherRequests/${user.enrollmentNum}`).then((response) => {
+				localStorage.setItem('requests', JSON.stringify(response.data));
+				setRequests(response.data || []);
+				setErrorAlert(false);
+			}).catch((error) => {
+				console.error("Error fetching equipments:", error);
+				setError(error);
+				setErrorAlert(true);
+			})
+		}
+		fetchData()
 	}, []);
 
 	return (
@@ -74,7 +77,7 @@ const TeacherDashboard = () => {
 
 			<Box sx={{ mt: 3 }} >
 				{value === 0 && <Home />}
-				{value === 1 && <MyEquipment  />}
+				{value === 1 && <MyEquipment />}
 				{value === 2 && <MyRequests />}
 			</Box>
 			{errorAlert && <Snackbar
