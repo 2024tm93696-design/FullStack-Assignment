@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { RegisterUser, LoginUser, isAuthenticated,logout,forgotPassword,changePassword, verifyMiddleware, verifyUser, GoogleLoginSuccess,GoogleLogout}
      = require('../controllers/user.js');
 const { addEquipment, getEquipments, getEquipmentDetail, updateEquipment, deleteEquipment } = require('../controllers/equipment.js');
-const {createRequest, updateRequestStatus, markAsReturned, getAllRequests, getMyRequests} = require('../controllers/request.js');
+const {createRequest, updateRequestStatus, markAsReturned, getAllRequests, getMyRequests, getTeacherRequests} = require('../controllers/request.js');
 const passport = require('passport')
 
 // User
@@ -33,6 +33,7 @@ router.delete('/equipment/:id', deleteEquipment);
 router.post('/createRequest', createRequest);
 router.get('/requests', getAllRequests);
 router.get('/myRequest/:id', getMyRequests);
+router.get('/teacherRequests/:id', getTeacherRequests)
 router.put('/updateRequest/:id', updateRequestStatus);
 router.put('/markReturn/:id', markAsReturned);
 

@@ -1,5 +1,6 @@
 const Request = require("../models/requestSchema.js");
 const Student = require("../models/studentSchema.js");
+const Teacher = require("../models/teacherSchema.js");
 const Equipment = require("../models/equipmentSchema.js");
 
 const generateId = () => {
@@ -9,8 +10,9 @@ const generateId = () => {
 
 const createRequest = async (req, res) => {
 	try {
-		// Check for overlapping approved bookings for same equipment
-		const { equipment, requestDate, student, returnDate, role } = req.body;
+		const { equipment, requestDate, returnDate, role, student, teacher } = req.body;
+
+		// Check if equipment already booked during given date range
 		const overlap = await Request.findOne({
 			"equipment.id": equipment.id,
 			status: "APPROVED",
@@ -21,15 +23,30 @@ const createRequest = async (req, res) => {
 		});
 
 		if (overlap) {
-			return res.status(400).send({
+			return res.status(400).json({
 				statusCode: 400,
-				message: "Requested Equipment is Already assigned to Someone for selected dates."
-			})
+				message: "Requested equipment is already assigned to someone for the selected dates."
+			});
 		}
 
+		let userField, userValue;
+		if (role === "Student") {
+			userField = "student.enrollmentNum";
+			userValue = student.enrollmentNum;
+		} else if (role === "Teacher") {
+			userField = "teacher.enrollmentNum";
+			userValue = teacher.enrollmentNum;
+		} else {
+			return res.status(400).json({
+				statusCode: 400,
+				message: "Invalid role. Must be 'Student' or 'Teacher'."
+			});
+		}
+
+		// Check for existing duplicate requests by same user for same equipment
 		const duplicateRequest = await Request.findOne({
 			"equipment.id": equipment.id,
-			"student.enrollmentNum": student.enrollmentNum,
+			[userField]: userValue,
 			status: { $in: ["PENDING", "APPROVED"] },
 			$and: [
 				{ requestDate: { $lte: new Date(returnDate) } },
@@ -38,31 +55,38 @@ const createRequest = async (req, res) => {
 		});
 
 		if (duplicateRequest) {
-			return res.status(400).send({
+			return res.status(400).json({
 				statusCode: 400,
-				message: "You have already made a request for this equipment for the selected dates."
-			})
+				message: "You already have a request for this equipment in the selected date range."
+			});
 		}
 
-		let request = new Request({
+		let newRequest = new Request({
 			id: generateId(),
 			equipment,
-			student,
 			status: "PENDING",
 			role,
 			requestDate,
-			returnDate
-		})
-		let result = await request.save();
-		res.status(201).send({
+			returnDate,
+			...(role === "Student" ? { student } : { teacher }) // dynamic assignment
+		});
+
+		let result = await newRequest.save();
+
+		return res.status(201).json({
 			statusCode: 201,
-			message: `Request for ${equipment.name} created Successfully`,
-			data: request
-		})
+			message: `Request for ${equipment.name} created successfully.`,
+			data: result
+		});
 	} catch (err) {
-		res.status(500).json(err);
+		console.error("Error creating request:", err);
+		res.status(500).json({
+			statusCode: 500,
+			message: "An error occurred while creating the request.",
+			error: err.message
+		});
 	}
-}
+};
 
 // Staff/Admin: Approve or reject a request
 const updateRequestStatus = async (req, res) => {
@@ -111,13 +135,23 @@ const updateRequestStatus = async (req, res) => {
 		request.equipment.quantity = Number(request.equipment.quantity);
 		request.equipment.availability = Number(request.equipment.availability);
 		request.equipment.availability -= 1;
+		if (request.equipment.availability <= 0) request.equipment.condition = "OUT OF STOCK";
 		await request.save();
 		if (status === "APPROVED") {
-			await Student.findOneAndUpdate(
-				{ enrollmentNum: request.student.enrollmentNum },
-				{ $addToSet: { equipment: request.equipment } }, // add only if not already present
-				{ new: true }
-			);
+			if (request.role === "Student") {
+				await Student.findOneAndUpdate(
+					{ enrollmentNum: request.student.enrollmentNum },
+					{ $addToSet: { equipment: request.equipment } }, // add only if not already present
+					{ new: true }
+				);
+			} else {
+				await Teacher.findOneAndUpdate(
+					{ enrollmentNum: request.teacher.enrollmentNum },
+					{ $addToSet: { equipment: request.equipment } }, // add only if not already present
+					{ new: true }
+				);
+			}
+
 			if (request.equipment.availability > 0) {
 				await Equipment.findOneAndUpdate(
 					{ id: request.equipment.id },
@@ -131,8 +165,8 @@ const updateRequestStatus = async (req, res) => {
 							$set: {
 								"condition": {
 									$cond: [
-										{ $eq: ["$condition","AVAILABLE"] },
-										 "OUT OF STOCK",
+										{ $eq: ["$condition", "AVAILABLE"] },
+										"OUT OF STOCK",
 										"$condition"
 									]
 								}
@@ -175,31 +209,39 @@ const markAsReturned = async (req, res) => {
 		request.equipment.quantity = Number(request.equipment.quantity);
 		request.equipment.availability = Number(request.equipment.availability);
 		if (request.status === "RETURNED") {
-			await Student.findOneAndUpdate(
-				{ enrollmentNum: request.student.enrollmentNum },
-				{ $pull: { "equipment.id": request.equipment.id } }, // removes that one item
-				{ new: true }
-			);
-			
-				await Equipment.findOneAndUpdate(
-					{ id: request.equipment.id },
-					[
-						{
-							$set: {
-								"availability": { $add: ["$availability", 1] },
-								"condition": {
-									$cond: [
-										{ $eq: ["$condition", "OUT OF STOCK"] },
-										"AVAILABLE",
-										"$condition"
-									]
-								}
-							}
-						}
-					],
+			if (request.role === "Student") {
+				await Student.findOneAndUpdate(
+					{ enrollmentNum: request.student.enrollmentNum },
+					{ $pull: { equipment: { id: request.equipment.id } } },
 					{ new: true }
 				);
+			} else {
+				await Teacher.findOneAndUpdate(
+					{ enrollmentNum: request.teacher.enrollmentNum },
+					{ $pull: { equipment: { id: request.equipment.id } } },
+					{ new: true }
+				);
+			}
+			await Equipment.findOneAndUpdate(
+				{ id: request.equipment.id },
+				[
+					{
+						$set: {
+							"availability": { $add: ["$availability", 1] },
+							"condition": {
+								$cond: [
+									{ $eq: ["$condition", "OUT OF STOCK"] },
+									"AVAILABLE",
+									"$condition"
+								]
+							}
+						}
+					}
+				],
+				{ new: true }
+			);
 			request.equipment.availability += 1;
+			request.equipment.condition = "AVAILABLE"
 		}
 		await request.save();
 		res.status(200).json({
@@ -241,4 +283,17 @@ const getMyRequests = async (req, res) => {
 	}
 };
 
-module.exports = { createRequest, updateRequestStatus, markAsReturned, getAllRequests, getMyRequests }
+const getTeacherRequests = async (req, res) => {
+	try {
+		const requests = await Request.find({ "teacher.enrollmentNum": req.params.id })
+		res.status(200).json({
+			statusCode: 200,
+			message: "My requests fetched successfully",
+			data: requests
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+module.exports = { createRequest, updateRequestStatus, markAsReturned, getAllRequests, getMyRequests, getTeacherRequests }

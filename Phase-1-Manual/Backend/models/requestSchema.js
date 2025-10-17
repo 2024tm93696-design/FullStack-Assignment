@@ -1,9 +1,9 @@
 const mongoose = require("mongoose")
 
 const requestSchema = new mongoose.Schema({
-    id : {
+    id: {
         type: String,
-        required:true,
+        required: true,
     },
     equipment: {
         id: {
@@ -35,15 +35,25 @@ const requestSchema = new mongoose.Schema({
     student: {
         name: {
             type: String,
-            required: true,
         },
         email: {
             type: String,
-            required: true,
         },
         enrollmentNum: {
             type: Number,
-            required: true,
+        },
+    },
+    teacher: {
+        enrollmentNum: {
+            type: String,
+            unique: true
+        },
+        name: {
+            type: String,
+        },
+        email: {
+            type: String,
+            unique: true,
         },
     },
     status: {
@@ -51,14 +61,14 @@ const requestSchema = new mongoose.Schema({
         enum: ['APPROVED', 'REJECTED', 'PENDING', 'RETURNED'],
         default: 'PENDING',
     },
-    requestDate: {  
+    requestDate: {
         type: Date,
         default: Date.now,
     },
-    returnDate: {  
+    returnDate: {
         type: Date,
     },
-    
+
     role: {
         type: String,
     },

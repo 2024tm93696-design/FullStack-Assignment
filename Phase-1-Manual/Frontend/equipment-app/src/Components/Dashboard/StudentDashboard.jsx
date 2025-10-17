@@ -6,9 +6,9 @@ import Tab from "@mui/material/Tab";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import HandymanOutlinedIcon from "@mui/icons-material/HandymanOutlined";
 import RequestPageOutlinedIcon from "@mui/icons-material/RequestPageOutlined";
-import Home from "../StudentsTab/Home";
-import MyEquipment from "../StudentsTab/MyEquipment";
-import MyRequests from "../StudentsTab/MyRequests";
+import Home from "../DashboardTabs/Home";
+import MyEquipment from "../DashboardTabs/MyEquipment";
+import MyRequests from "../DashboardTabs/MyRequests";
 import { Box, useMediaQuery, Snackbar, Alert } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -55,11 +55,8 @@ const Dashboard = () => {
 		})
 	}, []);
 
-	console.log(requests, 'stud');
-	
-
 	return (
-		<div style={{ backgroundColor: "rgba(242, 244, 239, 0.88)" }}>
+		<div style={{ backgroundColor: "rgba(235, 255, 255, 1)" }}>
 			<DashboardNavbar />
 
 			<Tabs

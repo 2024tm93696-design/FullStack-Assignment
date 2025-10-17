@@ -23,11 +23,27 @@ const teacherSchema = new mongoose.Schema({
 		type: String,
 		default: "Teacher"
 	},
-	// school: {
-	//     type: mongoose.Schema.Types.ObjectId,
-	//     ref: 'admin',
-	//     required: true,
-	// },
+    equipment: {
+		id: {
+			type: String,
+		},
+        name: {
+            type: String,
+        },
+        category: {
+            type: String,
+        },
+        condition: {
+            type: String,
+            enum: ['APPROVED', 'REJECTED', 'PENDING', 'RETURNED', "AVAILABLE"],
+        },
+        quantity: {
+            type: Number,
+        },
+        availability: {
+            type: Number,
+        },
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model("teacher", teacherSchema)

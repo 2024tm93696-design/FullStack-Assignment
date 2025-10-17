@@ -12,6 +12,8 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { Grid, Typography, Box } from "@mui/material";
 import dashboard from "../../images/dashboard.jpg";
+import teacher from "../../images/teacher.jpg"
+import admin from "../../images/admin.jpg"
 import "../../Assets/dashboard.css";
 
 const DashboardNavbar = () => {
@@ -69,13 +71,14 @@ const DashboardNavbar = () => {
 	}
 
 	const name = localStorage.getItem('name') || 'User Name';
+	const role = localStorage.getItem('role') || 'USER';
 
 	return (
 		<>
 			<AppBar
 				position="sticky"
 				sx={{
-					backgroundColor: "#bcad92ff",
+					backgroundColor: role==="Student"? "#94effdff" : role ===  "Teacher"?"#d3e2c4ff":"#bcad92ff" ,
 					boxShadow: "none",
 					padding: "0 10px",
 				}}
@@ -124,7 +127,7 @@ const DashboardNavbar = () => {
 				sx={{
 					position: "relative",
 					height: "70vh",
-					backgroundImage: `url(${dashboard})`,
+					backgroundImage: `url(${role==="Student"?dashboard:role=== "Teacher"?teacher: admin})`,
 					backgroundSize: "cover",
 					backgroundPosition: "center",
 					backgroundRepeat: "no-repeat",
@@ -159,6 +162,12 @@ const DashboardNavbar = () => {
 					}}
 				>
 					<Typography
+						variant="h4"
+						sx={{ fontWeight: 600, mb: 2, textShadow: "2px 2px 4px rgba(0,0,0,0.5)" , color:"rgba(244, 213, 213, 0.84)", textAlign:"center"}}
+					>
+						Hello {role === "Student"?"Student":  role=== "Teacher" ? "Staff": role} !
+					</Typography>
+					<Typography
 						variant="h3"
 						sx={{ fontWeight: 700, mb: 2, textShadow: "2px 2px 4px rgba(0,0,0,0.5)" }}
 					>
@@ -176,8 +185,7 @@ const DashboardNavbar = () => {
 						variant="body1"
 						sx={{ fontSize: "1.1rem", textShadow: "1px 1px 3px rgba(0,0,0,0.4)" }}
 					>
-						Simplify how your school manages resources — track, allocate, and
-						maintain equipment effortlessly across all departments.
+						Stay on top of your resource needs — request new equipment and manage returns seamlessly.
 					</Typography>
 				</Box>
 			</Box>

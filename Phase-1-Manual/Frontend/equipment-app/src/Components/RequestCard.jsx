@@ -10,9 +10,14 @@ import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import Chip from '@mui/material/Chip';
 import "../Assets/dashboard.css";
+import { Snackbar, Alert } from '@mui/material';
+import axios from 'axios';
 
-function DisplayCard({ objects, showButton }) {
+function DisplayCard({ objects, showButton, setObjects }) {
 	const [imageMap, setImageMap] = useState({});
+	const [alert, setAlert] = useState(false)
+	const [alertMessage, setAlertMessage] = useState(["", "success"])
+
 	const getStatus = (status) => {
 		if (status === "APPROVED") {
 			return "success";
@@ -35,7 +40,7 @@ function DisplayCard({ objects, showButton }) {
 						objName
 					)}&per_page=1`,
 					{
-						headers: { Authorization: "HiVKpphRuffD5Twu5yBzmqS41ON5hpEToFF40esWtDKRK06iWCtqKNoJ" },
+						headers: { Authorization: process.env.REACT_APP_PEXEL_ID },
 					}
 				);
 				const data = await res.json();
@@ -66,6 +71,25 @@ function DisplayCard({ objects, showButton }) {
 		if (objects.length > 0) fetchAllImages();
 	}, [objects]);
 
+	const handleReturn = async(request) => {
+		await axios.put(`http://localhost:5000/api/v1/markReturn/${request.id}`).then((response) => {
+			setAlert(true)
+			setTimeout(() => {
+				setAlert(false)
+			}, 4000)
+			setAlertMessage(["Equipment Returned SuccessFully", "success"]);
+       const myEquipments = objects.filter(item => item.id !== request.id);
+			 setObjects(myEquipments)
+		}).catch((error) => {
+			console.error("Error fetching equipments:", error);
+			setAlert(true)
+			setTimeout(() => {
+				setAlert(false)
+			}, 4000)
+			setAlertMessage([error.response.data.message,"error"])
+		})
+	}
+
 	return (
 		<div>
 			<Grid container spacing={{ xs: 1, sm: 1, md: 2 }} columns={{ xs: 4, sm: 12, md: 12, lg: 12 }}>
@@ -73,9 +97,11 @@ function DisplayCard({ objects, showButton }) {
 					objects.map((card, index) => {
 						const requestDate = dayjs(card.requestDate).format("DD-MM-YYYY");
 						const returnDate = dayjs(card.returnDate).format("DD-MM-YYYY")
+						const today = dayjs().format("DD-MM-YYYY");
+						
 						return (
-							<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
-								<Card sx={{boxShadow: "0 4px 20px rgba(0,0,0,0.2)", borderRadius: "6px" }} >
+								<Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
+									<Card sx={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)", borderRadius: "6px" }} className='card-width' >
 									{imageMap[card.equipment.name] ? <CardMedia
 										component="img"
 										alt="green iguana"
@@ -97,8 +123,12 @@ function DisplayCard({ objects, showButton }) {
 											{/* </div> */}
 										</Typography>
 									</CardContent>
-									<CardActions style={{ display: "flex", justifyContent: "space-between", padding: "10px 20px", float:showButton ? "left" : "right" }}>
-										{showButton && <Button size="small" className='btn'><b>Return Equipment</b></Button>}
+									<CardActions style={{ display: "flex", justifyContent: "space-between", padding: "10px 20px", float: showButton ? "left" : "right" }}>
+										{showButton &&
+											<>
+												<Button size="small" className='btn-request' onClick={() => handleReturn(card)}><b>Return Equipment</b></Button>
+												{dayjs(card.returnDate).isBefore(dayjs(), 'day') && <Chip label="Over Due" color="error" size='small' />}
+											</>}
 										{!showButton && <Chip label={card.status} color={getStatus(card.status)} size='small' />}
 									</CardActions>
 								</Card>
@@ -107,6 +137,14 @@ function DisplayCard({ objects, showButton }) {
 					})
 					: <h4>No Equipments Available</h4>}
 			</Grid>
+			{alert && <Snackbar
+				open={true}
+				autoHideDuration={4000}
+				anchorOrigin={{ vertical: "top", horizontal: "right" }}
+			>
+				<Alert severity={alertMessage[1]} className="d-flex justify-content-center align-items-center mt-1 fs-5 " style={{ border: "1px solid black" }}>{alertMessage[0]}</Alert>
+			</Snackbar>
+			}
 		</div>
 	)
 }

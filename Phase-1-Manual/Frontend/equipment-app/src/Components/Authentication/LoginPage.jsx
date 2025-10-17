@@ -43,17 +43,13 @@ function LoginPage() {
 				localStorage.setItem('userDetails', JSON.stringify(data.user));
 				if (data.message === "User login success") {
 					if (data.role === "Admin") {
-						localStorage.setItem('isAdmin', true)
 						navigate('/adminDashboard');
 					} else if (data.role === "Teacher") {
-						localStorage.setItem('isTeacher', true)
 						navigate('/teacherDashboard');
 					} else {
-						localStorage.setItem('isStudent', true)
 						navigate('/studentDashboard');
 					}
 				}
-				// navigate('/studentDashboard');
 			}
 			).catch(function (error) {
 				// handle error
@@ -61,8 +57,6 @@ function LoginPage() {
 				setError(error)
 				setAlert(true)
 				navigate(0)
-
-
 			})
 
 		},
