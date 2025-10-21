@@ -1,0 +1,36 @@
+.table-th {
+	th {
+		background-color: rgb(249, 234, 195);
+		font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+		text-transform: uppercase;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+}
+
+.collapse-th {
+	th {
+		background-color: rgb(249, 216, 195);
+		font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+		text-transform: uppercase;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+}
+
+.equip-table-th {
+	th {
+		background-color: rgb(246, 249, 195);
+		font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+		text-transform: uppercase;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+}
+
+.details {
+	td {
+		font-size: 1.2rem;
+		font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+	}
+}
