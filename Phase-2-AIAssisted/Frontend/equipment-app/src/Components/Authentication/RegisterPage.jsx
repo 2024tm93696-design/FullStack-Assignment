@@ -3,7 +3,19 @@ import "../../Assets/loginPage.css";
 import logoEq from "../../images/logoEq.webp";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import KeyIcon from "@mui/icons-material/Key";
-import { Snackbar, Alert } from '@mui/material';
+import {
+	TextField,
+	FormControl,
+	FormLabel,
+	RadioGroup,
+	FormControlLabel,
+	Radio,
+	InputAdornment,
+	Snackbar,
+	Alert,
+	MenuItem,
+	Select,
+} from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import { useNavigate } from "react-router";
@@ -25,6 +37,7 @@ const options = [
 function RegisterPage() {
 
 	const [alert, setAlert] = useState(false)
+	const [alertMessage, setAlertMessage] = useState("")
 	const navigate = useNavigate();
 	const formik = useFormik({
 		initialValues: {
@@ -50,10 +63,17 @@ function RegisterPage() {
 			await axios.post(`${config.auth}/register`, data).then(({ data }) => {
 				console.log(data.message)
 				navigate('/loginpage');
+				setTimeout(() => {
+					setAlert(false)
+				}, 4000)
+				setAlertMessage(data.message)
 			}).catch((err) => {
 				console.log(err)
 				setAlert(true)
-				navigate(0)
+				setTimeout(() => {
+					setAlert(false)
+				}, 4000)
+				setAlertMessage("User with this Email ID already exists")
 			})
 		},
 		validate: (values) => {
@@ -107,185 +127,213 @@ function RegisterPage() {
 				<div className=" login-flex rounded shadow">
 					<div className="column rounded bg-white login-flex-col-2 p-4">
 						<div className="text-center login-flex-col-div-2 mt-5">
-							<h3 className="login-h4 fw-bold">Create Account</h3>
-							<br />
-							<form onSubmit={formik.handleSubmit}>
-								<h6>Register As:</h6>
-								<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-
-									<input
-										type="radio"
+							<h3 className="login-h4 fw-b">Create Account</h3>
+							<form
+								onSubmit={formik.handleSubmit}
+								style={{ width: "420px", margin: "auto", display: "flex", flexDirection: "column" }}
+							>
+								{/* Role Selection */}
+								<FormControl component="fieldset" fullWidth margin="normal">
+									<FormLabel component="legend" style={{fontWeight:"bold"}}>Register As</FormLabel>
+									<RadioGroup
+										row
 										name="role"
-										id="role"
-										className="email-input mt-2"
-										value="Student"
+										value={formik.values.role}
 										onChange={formik.handleChange}
-										checked={formik.values.role === "Student"}
-										placeholder=" Choose your role"
-									/>
-									<PersonOutlineIcon
-										style={{ fontSize: "25px", opacity: "0.7", marginRight: '1px' }}
-									/>
-									<label htmlFor="role">Student</label>
-									<br />
+										sx={{display:"flex", justifyContent:"center"}}
+									>
+										<FormControlLabel
+											value="Student"
+											control={<Radio />}
+											label="Student"
+										/>
+										<FormControlLabel
+											value="Teacher"
+											control={<Radio />}
+											label="Staff"
+										/>
+										<FormControlLabel value="Admin" control={<Radio />} label="Admin" />
+									</RadioGroup>
+									{formik.touched.role && formik.errors.role && (
+										<p style={{ color: "red", marginTop: "4px" }}>{formik.errors.role}</p>
+									)}
+								</FormControl>
 
-									<input
-										type="radio"
-										name="role"
-										id="role"
-										className="email-input mt-2"
-										value="Teacher"
-										onChange={formik.handleChange}
-										checked={formik.values.role === "Teacher"}
-										placeholder=" Choose your role"
-									/>
-									<PersonOutlineIcon
-										style={{ fontSize: "25px", opacity: "0.7", marginRight: '1px' }}
-									/>
-									<label htmlFor="role">Staff</label>
-
-									<br />
-
-									<input
-										type="radio"
-										name="role"
-										id="role"
-										className="email-input mt-2"
-										value="Admin"
-										onChange={formik.handleChange}
-										checked={formik.values.role === "Admin"}
-										placeholder=" Choose your role"
-									/>
-									<PersonOutlineIcon
-										style={{ fontSize: "25px", opacity: "0.7", marginRight: '1px' }}
-									/>
-									<label htmlFor="role">Admin</label>
-								</div>
-								<br />
-								<BadgeOutlinedIcon
-									style={{ fontSize: "30px", opacity: "0.7", marginRight: '5px' }}
-								/>
-								<input
-									type="number"
-									name="enrollmentNum"
+								{/* Enrollment Number */}
+								<TextField
+									fullWidth
 									id="enrollmentNum"
-									className="email-input"
-									onChange={formik.handleChange}
+									name="enrollmentNum"
+									label="Enrollment Number"
+									type="number"
 									value={formik.values.enrollmentNum}
-									min={100000}
-									max={999999}
-									pattern="\d{6}"
-									placeholder="Enrollment Number"
+									onChange={formik.handleChange}
+									error={
+										formik.touched.enrollmentNum && Boolean(formik.errors.enrollmentNum)
+									}
+									helperText={
+										formik.touched.enrollmentNum && formik.errors.enrollmentNum
+									}
+									margin="normal"
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">
+												<BadgeOutlinedIcon />
+											</InputAdornment>
+										),
+									}}
 								/>
-								<br />
-								<PersonOutlineIcon
-									style={{ fontSize: "30px", opacity: "0.7", marginRight: '5px' }}
-								/>
-								<input
-									type="text"
-									name="name"
+
+								{/* Name */}
+								<TextField
+									fullWidth
 									id="name"
-									className="email-input"
-									onChange={formik.handleChange}
+									name="name"
+									label="Name"
 									value={formik.values.name}
-									placeholder="Name"
+									onChange={formik.handleChange}
+									error={formik.touched.name && Boolean(formik.errors.name)}
+									helperText={formik.touched.name && formik.errors.name}
+									margin="normal"
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">
+												<PersonOutlineIcon />
+											</InputAdornment>
+										),
+									}}
 								/>
 
-								<br />
-								<MailOutlineIcon
-									style={{ fontSize: "30px", opacity: "0.7", marginRight: '5px' }}
-								/>
-								<input
-									type="email"
-									name="email"
+								{/* Email */}
+								<TextField
+									fullWidth
 									id="email"
-									className="email-input mt-2"
-									onChange={formik.handleChange}
+									name="email"
+									label="Email"
+									type="email"
 									value={formik.values.email}
-									placeholder=" Email"
+									onChange={formik.handleChange}
+									error={formik.touched.email && Boolean(formik.errors.email)}
+									helperText={formik.touched.email && formik.errors.email}
+									margin="normal"
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">
+												<MailOutlineIcon />
+											</InputAdornment>
+										),
+									}}
 								/>
-								<br />
-								<Selectcustom
-									className='email-input'
-									onChange={value => formik.setFieldValue('sques', value.value)}
-									value={formik.values.sques}
-									options={options}
 
-								/>
+								{/* Security Question */}
+								<FormControl fullWidth margin="normal">
+									<FormLabel>Security Question</FormLabel>
+									<Select
+										id="sques"
+										name="sques"
+										value={formik.values.sques}
+										onChange={formik.handleChange}
+										displayEmpty
+										error={formik.touched.sques && Boolean(formik.errors.sques)}
+									>
+										<MenuItem value="">
+											<em>Select a question</em>
+										</MenuItem>
+										{options.map((opt) => (
+											<MenuItem key={opt.value} value={opt.value}>
+												{opt.label}
+											</MenuItem>
+										))}
+									</Select>
+									{formik.touched.sques && formik.errors.sques && (
+										<p style={{ color: "red", marginTop: "4px" }}>{formik.errors.sques}</p>
+									)}
+								</FormControl>
 
-								<QuestionAnswerOutlinedIcon style={{ fontSize: "30px", opacity: "0.7", marginRight: '5px' }} />
-								<input
-									type="password"
-									name="ans1"
+								{/* Answer */}
+								<TextField
+									fullWidth
 									id="ans1"
-									className="email-input mt-2"
-									onChange={formik.handleChange}
+									name="ans1"
+									label="Answer"
 									value={formik.values.ans1}
-									placeholder=" Answer"
+									onChange={formik.handleChange}
+									error={formik.touched.ans1 && Boolean(formik.errors.ans1)}
+									helperText={formik.touched.ans1 && formik.errors.ans1}
+									margin="normal"
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">
+												<QuestionAnswerOutlinedIcon />
+											</InputAdornment>
+										),
+									}}
 								/>
-								<br />
 
-								<KeyIcon style={{ fontSize: "30px", opacity: "0.7", marginRight: '5px' }} />
-								<input
-									type="password"
-									name="password"
+								{/* Password */}
+								<TextField
+									fullWidth
 									id="password"
-									className="email-input mt-2"
-									onChange={formik.handleChange}
-									value={formik.values.password}
-									placeholder=" Password"
-								/>
-								<br />
-
-								<KeyIcon style={{ fontSize: "30px", opacity: "0.7", marginRight: '5px' }} />
-								<input
+									name="password"
+									label="Password"
 									type="password"
-									name="cpassword"
-									id="cpassword"
-									className="email-input mt-2"
+									value={formik.values.password}
 									onChange={formik.handleChange}
-									value={formik.values.cpassword}
-									placeholder=" Confirm Password"
+									error={formik.touched.password && Boolean(formik.errors.password)}
+									helperText={formik.touched.password && formik.errors.password}
+									margin="normal"
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">
+												<KeyIcon />
+											</InputAdornment>
+										),
+									}}
 								/>
-								<br />
-								<br />
-								<button className="btn btn-signin mt-2" type="submit" disabled={
-									!formik.isValid ||
-									!formik.dirty ||
-									formik.isSubmitting
-								}>
+
+								{/* Confirm Password */}
+								<TextField
+									fullWidth
+									id="cpassword"
+									name="cpassword"
+									label="Confirm Password"
+									type="password"
+									value={formik.values.cpassword}
+									onChange={formik.handleChange}
+									error={formik.touched.cpassword && Boolean(formik.errors.cpassword)}
+									helperText={formik.touched.cpassword && formik.errors.cpassword}
+									margin="normal"
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position="start">
+												<KeyIcon />
+											</InputAdornment>
+										),
+									}}
+								/>
+
+								{/* Submit */}
+								<button
+									className="btn btn-signin mt-3"
+									type="submit"
+									disabled={!formik.isValid || !formik.dirty || formik.isSubmitting}
+								>
 									Sign Up
 								</button>
-								{Object.values(formik.errors).length > 0 && (
-									<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-										{Object.entries(formik.errors).map(([field, error], index) => (
-											// formik.touched[field] && (
-												<Snackbar
-													key={index}
-													open={true}
-													autoHideDuration={3000}
-													anchorOrigin={{ vertical: "top", horizontal: "right" }}
-												>
-													<Alert severity="error" sx={{ width: "100%" }}>
-														{error}
-													</Alert>
-												</Snackbar>
-											// )
-										))}
-									</div>
-								)}
 
-								{alert &&
-									<>
-										<Snackbar
-											open={true}
-											autoHideDuration={3000}
-											anchorOrigin={{ vertical: "top", horizontal: "right" }}
-										>
-											<Alert severity="error" className="login-alert d-flex justify-content-center align-items-center mt-1 ">User with Specific Email id already exists</Alert>
-										</Snackbar>
-									</>
-								}
+								{/* Alerts */}
+								{alert && (
+									<Snackbar
+										open={alert}
+										autoHideDuration={3000}
+										onClose={() => setAlert(false)}
+										anchorOrigin={{ vertical: "top", horizontal: "right" }}
+									>
+										<Alert severity="error">
+											{alertMessage}
+										</Alert>
+									</Snackbar>
+								)}
 							</form>
 						</div>
 					</div>

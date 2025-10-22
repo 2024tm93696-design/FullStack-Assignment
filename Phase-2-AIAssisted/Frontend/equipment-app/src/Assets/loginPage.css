@@ -3,7 +3,7 @@
 
 .body-login {
   background-color: rgb(240, 241, 241) !important;
-  height: 100vh;
+  height: 150vh;
 }
 
 .login-flex {
@@ -15,7 +15,7 @@
   position: absolute;
   top: 11%;
   width: 60%;
-  height: 80vh;
+  height: auto;
   margin-left: 18rem;
 }
 
@@ -113,6 +113,11 @@
   text-align: left;
   font-size: 0.8rem !important;
   
+}
+
+.forgot-btn {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: rgb(61, 186, 218);
 }
 
 @media only screen and (max-width: 800px) {
