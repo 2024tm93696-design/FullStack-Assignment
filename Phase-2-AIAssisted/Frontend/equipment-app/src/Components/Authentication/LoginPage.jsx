@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../../Assets/loginPage.css";
-import { Link } from "react-router-dom";
 import logoEq from "../../images/logoEq.webp";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";

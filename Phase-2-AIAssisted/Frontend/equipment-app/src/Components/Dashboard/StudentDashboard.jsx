@@ -9,6 +9,7 @@ import RequestPageOutlinedIcon from "@mui/icons-material/RequestPageOutlined";
 import Home from "../DashboardTabs/Home";
 import MyEquipment from "../DashboardTabs/MyEquipment";
 import MyRequests from "../DashboardTabs/MyRequests";
+import Footer from "../Footer";
 import { Box, useMediaQuery, Snackbar, Alert } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -20,6 +21,7 @@ const Dashboard = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const isSmallScreen = useMediaQuery("(max-width:600px)");
+	const user = JSON.parse(localStorage.getItem("userDetails")) || {};
 
 	// Mapping tabs to URL hashes
 	const tabHashes = ["#home", "#my-equipment", "#my-requests"];
@@ -42,8 +44,8 @@ const Dashboard = () => {
 	};
 
 	useEffect(() => {
-		const user = JSON.parse(localStorage.getItem("userDetails")) || {};
-		axios.get(`http://localhost:5000/api/v1/myRequest/${user.enrollmentNum}`).then((response) => {
+		const userDetails = JSON.parse(localStorage.getItem("userDetails")) || {};
+		axios.get(`http://localhost:5000/api/v1/myRequest/${userDetails.enrollmentNum}`).then((response) => {
 			console.log(response.data);
 			localStorage.setItem('requests', JSON.stringify(response.data));
 			setRequests(response.data || []);
@@ -86,6 +88,7 @@ const Dashboard = () => {
 				<Alert severity="error" className="login-alert d-flex justify-content-center align-items-center mt-1 ">{error}</Alert>
 			</Snackbar>
 			}
+			<Footer role={user?.role} />
 		</div>
 	);
 };

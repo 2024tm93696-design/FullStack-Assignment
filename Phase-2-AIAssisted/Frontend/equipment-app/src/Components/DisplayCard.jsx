@@ -134,8 +134,8 @@ function DisplayCard({ objects, setObjects, handleEditOpen }) {
 							const userId = JSON.parse(localStorage.getItem("userDetails")).enrollmentNum;
 							const role = JSON.parse(localStorage.getItem("userDetails")).role;
 							const userRequests = localStorage.getItem('requests') ? JSON.parse(localStorage.getItem('requests')) : [];
-							const currRequest = userRequests.data.filter(req => req.equipment.id === card.id);
-							const latestRequest = currRequest.reduce((latest, current) => {
+							const currRequest = userRequests?.data?.filter(req => req.equipment.id === card.id);
+							const latestRequest = currRequest?.reduce((latest, current) => {
 								return new Date(current.requestDate) > new Date(latest.requestDate) ? current : latest;
 							}, currRequest[0]);
 							const requestStatus = latestRequest ? latestRequest.status : null;

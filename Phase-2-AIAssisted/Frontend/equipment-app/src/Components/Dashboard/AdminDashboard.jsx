@@ -10,13 +10,14 @@ import AdminRequests from "../AdminTabs/AdminRequests";
 import { Box, useMediaQuery, Snackbar, Alert } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import EquipmentHistory from "../AdminTabs/EquipmentHistory";
+import Footer from "../Footer";
 
 const AdminDashboard = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const isSmallScreen = useMediaQuery("(max-width:600px)");
 	const tabHashes = ["#admin-home", "#admin-requests", "#equipment-history"];
-
+	const user = JSON.parse(localStorage.getItem("userDetails")) || {};
 	const initialTab = tabHashes.indexOf(location.hash);
 	const [value, setValue] = useState(initialTab === -1 ? 0 : initialTab);
 
@@ -54,6 +55,7 @@ const AdminDashboard = () => {
 				{value === 1 && <AdminRequests />}
 				{value === 2 && <EquipmentHistory />}
 			</Box>
+			<Footer role={user?.role} />
 		</div>
 	);
 };

@@ -11,6 +11,7 @@ import MyEquipment from "../DashboardTabs/MyEquipment";
 import MyRequests from "../DashboardTabs/MyRequests";
 import { Box, useMediaQuery, Snackbar, Alert } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
+import Footer from "../Footer";
 import axios from "axios";
 
 const TeacherDashboard = () => {
@@ -19,6 +20,7 @@ const TeacherDashboard = () => {
 	const [error, setError] = useState("Something went wrong. Please try again later.");
 	const navigate = useNavigate();
 	const location = useLocation();
+	const user = JSON.parse(localStorage.getItem("userDetails")) || {};
 	const isSmallScreen = useMediaQuery("(max-width:600px)");
 
 	// Mapping tabs to URL hashes
@@ -43,8 +45,8 @@ const TeacherDashboard = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const user = JSON.parse(localStorage.getItem("userDetails")) || {};
-			await axios.get(`http://localhost:5000/api/v1/teacherRequests/${user.enrollmentNum}`).then((response) => {
+			const userDetails = JSON.parse(localStorage.getItem("userDetails")) || {};
+			await axios.get(`http://localhost:5000/api/v1/teacherRequests/${userDetails.enrollmentNum}`).then((response) => {
 				localStorage.setItem('requests', JSON.stringify(response.data));
 				setRequests(response.data || []);
 				setErrorAlert(false);
@@ -88,6 +90,7 @@ const TeacherDashboard = () => {
 				<Alert severity="error" className="login-alert d-flex justify-content-center align-items-center mt-1 ">{error}</Alert>
 			</Snackbar>
 			}
+			<Footer role={user?.role} />
 		</div>
 	);
 };
