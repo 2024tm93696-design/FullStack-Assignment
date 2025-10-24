@@ -119,6 +119,7 @@ const DashboardNavbar = () => {
 								horizontal: "right",
 							}}
 						>
+							<MenuItem onClick={()=> {navigate("/changePassword")}}>Change Password</MenuItem>
 							<MenuItem onClick={handleLogout}>Logout</MenuItem>
 						</Menu>
 					</Box>

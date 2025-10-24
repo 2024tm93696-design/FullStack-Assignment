@@ -6,6 +6,7 @@ import RegisterPage from "./Components/Authentication/RegisterPage";
 import StudentDashboard from './Components/Dashboard/StudentDashboard';
 import TeacherDashboard from './Components/Dashboard/TeacherDashboard';
 import AdminDashboard from './Components/Dashboard/AdminDashboard';
+import ChangePassword from "./Components/Authentication/ChangePassword";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/studentDashboard" element={<StudentDashboard/>} />
           <Route path="/teacherDashboard" element={<TeacherDashboard/>} />
           <Route path="/adminDashboard" element={<AdminDashboard/>} />
+          <Route path="/changePassword" element={<ChangePassword/>} />
         </Routes>
       </Router>
     </div>
