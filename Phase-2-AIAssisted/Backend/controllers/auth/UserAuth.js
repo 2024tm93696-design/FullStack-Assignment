@@ -1,6 +1,3 @@
-const Student = require('../../models/studentSchema');
-// const bcrypt = require('bcryptjs');
-
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'this is secret for jwt';
 

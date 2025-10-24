@@ -27,7 +27,7 @@ const getEquipments = async (req, res) => {
 
 const getEquipmentDetail = async (req, res) => {
 	try {
-		let equipment = await Equipment.findOne({ id: req.params.id });	
+		let equipment = await Equipment.findOne({ id: req.params.id });
 		if (equipment) {
 			res.status(200).send({
 				statusCode: 200,
@@ -36,10 +36,10 @@ const getEquipmentDetail = async (req, res) => {
 			});
 		} else {
 			res.status(404).send({
-				statusCode: 404,	
+				statusCode: 404,
 				message: "Equipment not found"
 			});
-		}	
+		}
 	} catch (err) {
 		res.status(500).json(err);
 	}
@@ -47,7 +47,6 @@ const getEquipmentDetail = async (req, res) => {
 
 const addEquipment = async (req, res) => {
 	try {
-
 		let newEquipment = new Equipment({
 			...req.body,
 			id: generateId()
@@ -59,10 +58,10 @@ const addEquipment = async (req, res) => {
 					statusCode: 400,
 					message: "Equipment already exsists"
 				});
-			}else if(req.body.quantity < 0 || req.body.availability < 0 || req.body.availability > req.body.quantity) {
+			} else if (req.body.quantity < 0 || req.body.availability < 0 || req.body.availability > req.body.quantity) {
 				res.status(400).send({
 					statusCode: 400,
-					message: "Invalid quantity or availability"	
+					message: "Invalid quantity or availability"
 				});
 			} else {
 				let result = await newEquipment.save();
@@ -87,10 +86,10 @@ const updateEquipment = async (req, res) => {
 	try {
 		let equipment = await Equipment.findOne({ id: req.params.id });
 		if (req.body.role && req.body.role === "Admin") {
-			if(req.body.quantity < 0 || req.body.availability < 0 || req.body.availability > req.body.quantity) {
+			if (req.body.quantity < 0 || req.body.availability < 0 || req.body.availability > req.body.quantity) {
 				res.status(400).send({
 					statusCode: 400,
-					message: "Invalid quantity or availability"	
+					message: "Invalid quantity or availability"
 				});
 			} else if (equipment) {
 				equipment.name = req.body.name || equipment.name;
@@ -109,8 +108,8 @@ const updateEquipment = async (req, res) => {
 			res.status(403).send({
 				statusCode: 403,
 				message: "Only users with role 'Admin' can update equipment"
-		})
-	}
+			})
+		}
 	} catch (err) {
 		res.status(500).json(err);
 	}
@@ -120,12 +119,12 @@ const deleteEquipment = async (req, res) => {
 	try {
 		if (req.body.role && req.body.role === "Admin") {
 			let equipment = await Equipment.findOne({ id: req.params.id });
-			if(req.body.quantity < 0 || req.body.availability < 0 || req.body.availability > req.body.quantity) {
+			if (req.body.quantity < 0 || req.body.availability < 0 || req.body.availability > req.body.quantity) {
 				res.status(400).send({
 					statusCode: 400,
-					message: "Invalid quantity or availability"	
+					message: "Invalid quantity or availability"
 				});
-			}else if (equipment) {
+			} else if (equipment) {
 				await Equipment.deleteOne({ id: req.params.id });
 				res.status(200).send({
 					statusCode: 200,
@@ -155,5 +154,3 @@ module.exports = {
 	updateEquipment,
 	deleteEquipment
 };
-
-

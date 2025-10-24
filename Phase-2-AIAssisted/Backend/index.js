@@ -5,7 +5,6 @@ const dotenv = require("dotenv")
 const bodyParser = require("body-parser")
 const app = express()
 const Routes = require("./routes/route.js")
-const cookieSession = require("cookie-session");
 const passport = require('passport')
 require('./controllers/auth/authenticator.js')
 const session = require('express-session')
@@ -37,6 +36,13 @@ mongoose
     .catch((err) => console.log("NOT CONNECTED TO NETWORK", err))
 
 app.use('/api/v1', Routes);
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith("/api")) {
+    return res.status(404).json({ message: "API route not found" });
+  }
+  // For frontend routes
+  res.redirect("http://localhost:3000/404");
+});
 
 app.listen(PORT, () => {
     console.log(`Server started at port no. ${PORT}`)

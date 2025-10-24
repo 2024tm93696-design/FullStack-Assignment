@@ -11,7 +11,6 @@ const generateId = () => {
 const createRequest = async (req, res) => {
 	try {
 		const { equipment, requestDate, returnDate, role, student, teacher } = req.body;
-
 		// Check if equipment already booked during given date range
 		const overlap = await Request.findOne({
 			"equipment.id": equipment.id,
