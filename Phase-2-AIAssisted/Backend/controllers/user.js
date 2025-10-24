@@ -8,10 +8,10 @@ const RegisterUser = async (req, res) => {
     try {
         const schema = req.body.role === 'Student' ? Student : req.body.role === 'Teacher' ? Teacher : Admin;
         console.log(req.body.role, 'lll');
-        
+
         const existingUser = await schema.findOne({ email: req.body.email });
-          console.log(existingUser, 'opop');
-          
+        console.log(existingUser, 'opop');
+
         if (existingUser) {
             return res.status(409).send({
                 status: 409,
@@ -82,9 +82,15 @@ const LoginUser = async (req, res) => {
     try {
         const schema = req.body.role === 'Student' ? Student : req.body.role === 'Teacher' ? Teacher : Admin;
         const username = req.body.email;
+        const enroll = req.body.enrollmentNum
         console.log(username);
 
-        const user = await schema.findOne({ email: username });
+        const user = await schema.findOne({
+            $and: [
+                { email: username },
+                { enrollmentNum: enroll }
+            ]
+        });
 
         if (!user) {
             return res.status(404).send({
