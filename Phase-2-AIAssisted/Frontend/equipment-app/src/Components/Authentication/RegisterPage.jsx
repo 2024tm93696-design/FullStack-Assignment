@@ -316,7 +316,6 @@ function RegisterPage() {
 								<button
 									className="btn btn-signin mt-3"
 									type="submit"
-									disabled={!formik.isValid || !formik.dirty || formik.isSubmitting}
 								>
 									Sign Up
 								</button>

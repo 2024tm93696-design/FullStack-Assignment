@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose";
 
 const requestSchema = new mongoose.Schema({
     id: {
@@ -74,4 +74,4 @@ const requestSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("request", requestSchema)
+export default mongoose.model("request", requestSchema)

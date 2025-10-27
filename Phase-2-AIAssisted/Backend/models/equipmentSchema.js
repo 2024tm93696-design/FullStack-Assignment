@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose";
 
 const equipmentSchema = new mongoose.Schema({
     id : {
@@ -28,4 +28,4 @@ const equipmentSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("equipment", equipmentSchema)
+export default mongoose.model("equipment", equipmentSchema)

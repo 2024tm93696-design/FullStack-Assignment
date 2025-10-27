@@ -1,16 +1,20 @@
-const bcrypt = require('bcrypt');
-const Student = require('../models/studentSchema.js');
-const Teacher = require('../models/teacherSchema.js');
-const Admin = require('../models/adminSchema.js');
-const { TokenGenerator, TokenVerification } = require('./auth/UserAuth.js');
+import bcrypt from 'bcrypt';
+import Student from "../models/studentSchema.js"
+import Teacher from "../models/teacherSchema.js"
+import Admin from '../models/adminSchema.js';
+import { TokenGenerator, TokenVerification } from './auth/UserAuth.js'
 
 const RegisterUser = async (req, res) => {
     try {
         const schema = req.body.role === 'Student' ? Student : req.body.role === 'Teacher' ? Teacher : Admin;
-        console.log(req.body.role, 'lll');
-
-        const existingUser = await schema.findOne({ email: req.body.email });
-        console.log(existingUser, 'opop');
+        const username = req.body.email;
+        const enroll = req.body.enrollmentNum
+        const existingUser = await schema.findOne({
+            $and: [
+                { email: username },
+                { enrollmentNum: enroll }
+            ]
+        });
 
         if (existingUser) {
             return res.status(409).send({
@@ -83,7 +87,7 @@ const LoginUser = async (req, res) => {
         const schema = req.body.role === 'Student' ? Student : req.body.role === 'Teacher' ? Teacher : Admin;
         const username = req.body.email;
         const enroll = req.body.enrollmentNum
-        console.log(username);
+        console.log(username, '==', enroll);
 
         const user = await schema.findOne({
             $and: [
@@ -95,7 +99,11 @@ const LoginUser = async (req, res) => {
         if (!user) {
             return res.status(404).send({
                 status: 404,
-                message: "Invalid Credentials"
+                message: "Invalid Credentials",
+                data: {
+                    username:username,
+                    enroll: enroll
+                }
             });
         }
 
@@ -357,4 +365,5 @@ const GoogleLogout = (req, res) => {
     }
 };
 
-module.exports = { RegisterUser, LoginUser, verifyMiddleware, isAuthenticated, VerifyTokenMiddleware, logout, changePassword, verifyUser, forgotPassword, GoogleLoginSuccess, GoogleLogout }
+const userController = { RegisterUser, LoginUser, verifyMiddleware, isAuthenticated, VerifyTokenMiddleware, logout, changePassword, verifyUser, forgotPassword, GoogleLoginSuccess, GoogleLogout }
+export default userController;

@@ -1,5 +1,5 @@
-const Equipment = require('../models/equipmentSchema.js');
-
+// const Equipment = require('');
+import Equipment from "../models/equipmentSchema.js"
 const generateId = () => {
 	const id = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 	return id;
@@ -51,7 +51,7 @@ const addEquipment = async (req, res) => {
 			...req.body,
 			id: generateId()
 		});
-		isExsisting = await Equipment.findOne({ name: req.body.name, category: req.body.category });
+		const isExsisting = await Equipment.findOne({ name: req.body.name, category: req.body.category });
 		if (req.body.role && req.body.role === "Admin") {
 			if (isExsisting) {
 				res.status(400).send({
@@ -78,6 +78,8 @@ const addEquipment = async (req, res) => {
 			});
 		}
 	} catch (err) {
+		console.log(err);
+		
 		res.status(500).json(err);
 	}
 }
@@ -147,10 +149,12 @@ const deleteEquipment = async (req, res) => {
 	}
 }
 
-module.exports = {
+const equipController = {
 	getEquipments,
 	getEquipmentDetail,
 	addEquipment,
 	updateEquipment,
 	deleteEquipment
 };
+
+export default equipController

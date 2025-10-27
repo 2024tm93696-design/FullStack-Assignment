@@ -28,7 +28,7 @@ function AdminHome() {
 
 	const handleClickOpen = (card) => {
 		setOpen(true);
-		if (card.length > 0) {
+		if (card.id !== undefined) {
 			setIsEdit(true);
 			setCardId(card.id);
 			setFormData({

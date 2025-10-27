@@ -1,4 +1,5 @@
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken"
 const SECRET_KEY = 'this is secret for jwt';
 
 
@@ -16,4 +17,4 @@ function TokenVerification(token) {
 }
 
 
-module.exports = { TokenGenerator, TokenVerification}
+export { TokenGenerator, TokenVerification}

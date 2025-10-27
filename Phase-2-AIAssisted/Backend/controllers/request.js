@@ -1,7 +1,7 @@
-const Request = require("../models/requestSchema.js");
-const Student = require("../models/studentSchema.js");
-const Teacher = require("../models/teacherSchema.js");
-const Equipment = require("../models/equipmentSchema.js");
+import Request from "../models/requestSchema.js";
+import Student from "../models/studentSchema.js"
+import Teacher from "../models/teacherSchema.js"
+import Equipment from "../models/equipmentSchema.js"
 
 const generateId = () => {
 	const id = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
@@ -295,4 +295,5 @@ const getTeacherRequests = async (req, res) => {
 	}
 };
 
-module.exports = { createRequest, updateRequestStatus, markAsReturned, getAllRequests, getMyRequests, getTeacherRequests }
+const requestController = { createRequest, updateRequestStatus, markAsReturned, getAllRequests, getMyRequests, getTeacherRequests }
+export default requestController;

@@ -1,17 +1,31 @@
-const express = require("express")
-const cors = require("cors")
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
-const bodyParser = require("body-parser")
+// const express = require("express")
+import express from "express";
+// const cors = require("cors")
+// const mongoose = require("mongoose")
+// const dotenv = require("dotenv")
+// const bodyParser = require("body-parser")
+// const app = express()
+// const Routes = require("./routes/route.js")
+// const passport = require('passport')
+// require('./controllers/auth/authenticator.js')
+// const session = require('express-session')
+import cors from "cors";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import bodyParser from "body-parser";
 const app = express()
-const Routes = require("./routes/route.js")
-const passport = require('passport')
-require('./controllers/auth/authenticator.js')
-const session = require('express-session')
+import session from "express-session";
+import passport from "passport";
+import "./controllers/auth/authenticator.js";
+import Routes from "./routes/route.js"
+import { swaggerUi, swaggerSpec } from "./swagger.js";
+// const swaggerUi = require("./swagger.js");
+// const swaggerSpec = require("./swagger.js");
 
 const PORT = process.env.PORT || 5000
 
-var cookieParser=require('cookie-parser')
+// var cookieParser=require('cookie-parser')
+import cookieParser from "cookie-parser";
 app.use(session({secret:'cats'}))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -23,6 +37,7 @@ app.use(bodyParser.json({ limit: '10mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
 app.use(express.json({ limit: '10mb' }))
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true        
@@ -43,6 +58,7 @@ app.use((req, res, next) => {
   // For frontend routes
   res.redirect("http://localhost:3000/404");
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server started at port no. ${PORT}`)
